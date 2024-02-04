@@ -1,18 +1,40 @@
-# Pulumi Demo Project
-
+# Pulumi Demo Project | Azure Backend
 This project uses the open source bits of the Pulumi IaC tool for my personal
 learning and development. Generally, I document my work from the perspective
 of running it as IaC using service accounts. You will find that most online
 quickstarts tend to use your personal credentials. This is a bad practice if 
-you indend to use your code in a pipeline.  
+you indend to use your code in a pipeline. Other backend are supported. I am
+starting with Azure.
 
 ## Getting Started
-* Quickstart: <https://www.pulumi.com/docs/clouds/azure/get-started/begin/>
-* Linux non-root install - `curl -fsSL https://get.pulumi.com | sh` 
+Quickstart: <https://www.pulumi.com/docs/clouds/azure/get-started/begin/>
 
-## Random useful commands
-* Some commands used are embedded below in my example env file.
-* Log into your local sessions as your service account: 
+Linux non-root install - `curl -fsSL https://get.pulumi.com | sh` 
+
+## Steps
+Be mindful that there are two phases to bootstrapping a new Pulumi project in
+Azure. The first would be the **bootstrap** steps. You will perform these as
+your root Azure personal account.
+
+`curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` - Azure CLI install.
+
+`az login --use-device-code` - Login with your personal Azure root account.
+
+`az account list --output table` - Ensure you are on the correct subscription.
+
+`az account set --subscription <your_subscription>` - Change subscription.
+
+Create your azure Service principal for future automation and local dev. The
+outputs from this command will be used in your local environment file as the
+`ARM_` variables. 
+```bash
+az ad sp create-for-rbac \
+--role="Contributor" \
+--scopes="/subscriptions/<your_subscription>" \
+--years 5"
+```
+
+Login locally as your newly created service principal.
 ```bash
 az login \
 --service-principal \
@@ -22,7 +44,18 @@ az login \
 --output table`
 ```
 
+## Random useful commands
+* Some commands used are embedded below in my example env file.
+* Log into your local sessions as your service account: 
+
+
+
 ## Example env file to source, YMMV
+This file is mean to be created for local use only. I usually keep it in a
+`/tmp` folder which is included in my `.gitignore`. The idea being, you can
+just `source` it and be up and running on local dev. For pipeline work, you
+would add the environment variables to your CI platform of choice.
+
 ```bash
 #!/usr/bin/env bash
 
