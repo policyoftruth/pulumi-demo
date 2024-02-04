@@ -7,26 +7,39 @@ you indend to use your code in a pipeline. Other backend are supported. I am
 starting with Azure.
 
 ## Getting Started
-Quickstart: <https://www.pulumi.com/docs/clouds/azure/get-started/begin/>
-
-Linux non-root install - `curl -fsSL https://get.pulumi.com | sh` 
+ 
+```bash
+# Install Pulumi
+curl -fsSL https://get.pulumi.com | sh
+``` 
 
 ## Steps
 Be mindful that there are two phases to bootstrapping a new Pulumi project in
 Azure. The first would be the **bootstrap** steps. You will perform these as
 your root Azure personal account.
 
-`curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash` - Azure CLI install.
+```bash
+# Azure CLI install
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
 
-`az login --use-device-code` - Login with your personal Azure root account.
+```bash
+# Azure login stuff
+az login --use-device-code   
+az account list --output table 
+az account set --subscription <your_subscription>
+``` 
 
-`az account list --output table` - Ensure you are on the correct subscription.
-
-`az account set --subscription <your_subscription>` - Change subscription.
+```bash
+# Create your resource group, storage account, and container 
+az group create --name "rg-example-bootstrap" --location "EastUS"  
+az storage account create --name "pulumistorageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
+az storage container create -n "container-pulumi" --account-name "pulumistorageaccount"
+```  
 
 Create your azure Service principal for future automation and local dev. The
-outputs from this command will be used in your local environment file as the
-`ARM_` variables. 
+outputs from this command need to be added to your local environment file as the
+`ARM_` variables listed below:  
 ```bash
 az ad sp create-for-rbac \
 --role="Contributor" \
@@ -59,11 +72,6 @@ would add the environment variables to your CI platform of choice.
 ```bash
 #!/usr/bin/env bash
 
-### bootstrap commands
-### az group create --name "rg-example-bootstrap" --location "EastUS"
-### az storage account create --name "pulumistorageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
-### az storage container create -n "container-pulumi" --account-name "pulumistorageaccount"
-
 azure_resource_group="rg-example-bootstrap"
 azure_storage_account="pulumistorageaccount"
 azure_storage_container="container-pulumi"
@@ -81,6 +89,9 @@ export PULUMI_BACKEND_URL="azblob://${azure_storage_account}.blob.core.windows.n
 export AZURE_STORAGE_ACCOUNT=${azure_storage_account}
 export AZURE_STORAGE_KEY=$(az storage account keys list --resource-group ${azure_resource_group} --account-name ${azure_storage_account} --query "[0].value" --output tsv)
 ```
+
+## References
+[Pulumi Quickstart Guide](<https://www.pulumi.com/docs/clouds/azure/get-started/begin/>) 
 
 ## Todo
 * Refactor SP command to dump the results to a keyvault and pull ARM values
