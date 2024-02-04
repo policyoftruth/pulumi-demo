@@ -31,7 +31,8 @@ az account set --subscription <your_subscription>
 ``` 
 
 ```bash
-# Create your resource group, storage account, and container 
+# Create your resource group, storage account, and container
+# The Azure storage account name needs to be globally unique
 az group create --name "rg-example-bootstrap" --location "EastUS"  
 az storage account create --name "pulumistorageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
 az storage container create -n "container-pulumi" --account-name "pulumistorageaccount"
