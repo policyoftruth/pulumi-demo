@@ -9,19 +9,19 @@ starting with Azure.
 ## Getting Started
  
 ```bash
-# Install Pulumi
+# Pulumi Install
 curl -fsSL https://get.pulumi.com | sh
 ``` 
+
+```bash
+# Azure CLI install, trust but verify
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
 
 ## Steps
 Be mindful that there are two phases to bootstrapping a new Pulumi project in
 Azure. The first would be the **bootstrap** steps. You will perform these as
 your root Azure personal account.
-
-```bash
-# Azure CLI install
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-```
 
 ```bash
 # Azure login stuff
@@ -72,19 +72,18 @@ would add the environment variables to your CI platform of choice.
 ```bash
 #!/usr/bin/env bash
 
+### Azure resources
 azure_resource_group="rg-example-bootstrap"
 azure_storage_account="pulumistorageaccount"
 azure_storage_container="container-pulumi"
 
-### needed service principal values
-### "az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<your_subscription>" --years 5"
-
+### Service principal values
 export ARM_CLIENT_ID="<appId>"
 export ARM_CLIENT_SECRET="<password>"
 export ARM_TENANT_ID="<tenant>"
 export ARM_SUBSCRIPTION_ID="<subsciption>"
 
-### pulumi specific values
+### Pulumi values
 export PULUMI_BACKEND_URL="azblob://${azure_storage_account}.blob.core.windows.net/${azure_storage_container}"
 export AZURE_STORAGE_ACCOUNT=${azure_storage_account}
 export AZURE_STORAGE_KEY=$(az storage account keys list --resource-group ${azure_resource_group} --account-name ${azure_storage_account} --query "[0].value" --output tsv)
