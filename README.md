@@ -6,6 +6,9 @@ quickstarts tend to use your personal credentials. This is a bad practice if
 you indend to use your code in a pipeline. Other backend are supported. I am
 starting with Azure.
 
+## References
+[Pulumi Quickstart Guide](<https://www.pulumi.com/docs/clouds/azure/get-started/begin/>) 
+
 ## Getting Started
  
 ```bash
@@ -66,10 +69,6 @@ az login \
 pulumi login azblob://pulumi-backend
 ```
 
-## Random useful commands
-* Some commands used are embedded below in my example env file.
-* Log into your local sessions as your service account: 
-
 ## Example env file to source, YMMV
 This file is mean to be created for local use only. I usually keep it in a
 `/tmp` folder which is included in my `.gitignore`. The idea being, you can
@@ -95,9 +94,6 @@ export PULUMI_BACKEND_URL="azblob://${azure_storage_account}.blob.core.windows.n
 export AZURE_STORAGE_ACCOUNT=${azure_storage_account}
 export AZURE_STORAGE_KEY=$(az storage account keys list --resource-group ${azure_resource_group} --account-name ${azure_storage_account} --query "[0].value" --output tsv)
 ```
-
-## References
-[Pulumi Quickstart Guide](<https://www.pulumi.com/docs/clouds/azure/get-started/begin/>) 
 
 ## Todo
 * Refactor SP command to dump the results to a keyvault and pull ARM values
