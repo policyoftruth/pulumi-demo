@@ -38,7 +38,7 @@ az account set --subscription <your_subscription>
 # The Azure storage account name needs to be globally unique
 az group create --name "rg-example-bootstrap" --location "EastUS"  
 az storage account create --name "pulumi001storageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
-az storage container create -n "pulumi-backend" --account-name "pulumi001storageaccount" --auth-mode login
+az storage container create -n "pulumibackend" --account-name "pulumi001storageaccount" --auth-mode login
 ```  
 
 Create your Azure service principal for future automation and local dev. The
@@ -58,15 +58,15 @@ Login locally as your newly created service principal.
 ```bash
 az login \
 --service-principal \
---username ${ARM_CLIENT_ID} \ 
---password ${ARM_CLIENT_SECRET} \ 
+--username ${ARM_CLIENT_ID} \
+--password ${ARM_CLIENT_SECRET} \
 --tenant ${ARM_TENANT_ID} \
 --output table
 ```
 
 ## Login to your new Pulumi backend on Azure!
 ```bash
-pulumi login azblob://pulumi-backend
+pulumi login
 ```
 
 ## Example env file to source, YMMV
@@ -81,7 +81,7 @@ would add the environment variables to your CI platform of choice.
 ### Azure resources
 azure_resource_group="rg-example-bootstrap"
 azure_storage_account="pulumi001storageaccount"
-azure_storage_container="pulumi-backend"
+azure_storage_container="pulumibackend"
 
 ### Service principal values
 export ARM_CLIENT_ID="<appId>"
@@ -90,9 +90,9 @@ export ARM_TENANT_ID="<tenant>"
 export ARM_SUBSCRIPTION_ID="<subsciption>"
 
 ### Pulumi values
-export PULUMI_BACKEND_URL="azblob://${azure_storage_account}.blob.core.windows.net/${azure_storage_container}"
-export AZURE_STORAGE_ACCOUNT=${azure_storage_account}
-export AZURE_STORAGE_KEY=$(az storage account keys list --resource-group ${azure_resource_group} --account-name ${azure_storage_account} --query "[0].value" --output tsv)
+export PULUMI_BACKEND_URL="azblob://${storage_container}"
+export AZURE_STORAGE_ACCOUNT="${azure_storage_account}"
+export AZURE_STORAGE_KEY="$(az storage account keys list --resource-group ${azure_resource_group} --account-name ${azure_storage_account} --query "[0].value" --output tsv)"
 ```
 
 ## Todo
