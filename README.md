@@ -34,18 +34,21 @@ az account set --subscription <your_subscription>
 # Create your resource group, storage account, and container
 # The Azure storage account name needs to be globally unique
 az group create --name "rg-example-bootstrap" --location "EastUS"  
-az storage account create --name "pulumistorageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
-az storage container create -n "container-pulumi" --account-name "pulumistorageaccount"
+az storage account create --name "pulumi001storageaccount" --resource-group "rg-example-bootstrap" --location "EastUS" --sku "Standard_LRS"
+az storage container create -n "pulumi-backend" --account-name "pulumi001storageaccount" --auth-mode login
 ```  
 
-Create your azure Service principal for future automation and local dev. The
-outputs from this command need to be added to your local environment file as the
-`ARM_` variables listed below:  
+Create your Azure service principal for future automation and local dev. The
+outputs from this command need to be added to your local environment file as
+the `ARM_` variables listed in the example env file section below. These are
+secrets. **Do not commit these values.** Once your env file is created, `source`
+it and the login variable values will be available for the next command's
+success.
 ```bash
 az ad sp create-for-rbac \
 --role="Contributor" \
---scopes="/subscriptions/<your_subscription>" \
---years 5"
+--scopes="/subscriptions/382fdf5d-5bdf-4cba-9946-7637db686413" \
+--years 5
 ```
 
 Login locally as your newly created service principal.
@@ -58,11 +61,14 @@ az login \
 --output table
 ```
 
+## Login to your new Pulumi backend on Azure!
+```bash
+pulumi login azblob://pulumi-backend
+```
+
 ## Random useful commands
 * Some commands used are embedded below in my example env file.
 * Log into your local sessions as your service account: 
-
-
 
 ## Example env file to source, YMMV
 This file is mean to be created for local use only. I usually keep it in a
@@ -75,8 +81,8 @@ would add the environment variables to your CI platform of choice.
 
 ### Azure resources
 azure_resource_group="rg-example-bootstrap"
-azure_storage_account="pulumistorageaccount"
-azure_storage_container="container-pulumi"
+azure_storage_account="pulumi001storageaccount"
+azure_storage_container="pulumi-backend"
 
 ### Service principal values
 export ARM_CLIENT_ID="<appId>"
