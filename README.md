@@ -55,7 +55,7 @@ az login \
 --username ${ARM_CLIENT_ID} \ 
 --password ${ARM_CLIENT_SECRET} \ 
 --tenant ${ARM_TENANT_ID} \
---output table`
+--output table
 ```
 
 ## Random useful commands
